@@ -6,6 +6,7 @@
 
  - Ctrl+S 保存
  - Ctrl+Z 撤回
+ - Ctrl+O 打开
  - E 橡皮擦
  - B 画笔
 
