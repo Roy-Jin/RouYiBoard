@@ -113,7 +113,7 @@
         "down": function (e) {
             if (isPenOnly && e.pointerType != "pen") return;
             setToolbarStatus(false);
-            // writeHistory();
+            writeHistory();
             canDraw = true;
             ctx.globalCompositeOperation = "source-over";
             ctx.strokeStyle = lineColorList[lineColorMode];
@@ -164,7 +164,7 @@
     const eraserMode = {
         "down": function (e) {
             setToolbarStatus(false);
-            // writeHistory();
+            writeHistory();
             canDraw = true;
             ctx.strokeStyle = "rgba(0,0,0,1)";
             ctx.globalCompositeOperation = "destination-out";
@@ -292,27 +292,32 @@
     }
 
 
-    window.onkeyup = function (e) {
-        if (e.ctrlKey == true && e.keyCode == 83) { //Ctrl+S 保存
+    window.onkeydown = function (e) {
+        if (e.ctrlKey == true && e.key == "s") { //Ctrl+S 保存
             e.preventDefault();
             e.returnvalue = false;
             saveCanvas();
         }
-        if (e.keyCode == 69) { //E 橡皮擦
+        if (e.key == "e") { //E 橡皮擦
             e.returnvalue = false;
             toolbarEraser.onpointerup();
         }
-        if (e.keyCode == 66) { //B 笔
+        if (e.key == "b") { //B 笔
             e.returnvalue = false;
             toolbarPen.onpointerup();
         }
-        if (e.ctrlKey == true && e.keyCode == 90) { //Ctrl+Z 撤销
+        if (e.ctrlKey == true && e.key == "z") { //Ctrl+Z 撤销
             e.returnvalue = false;
             e.preventDefault();
             let content = popHistory();
             if (content) {
                 ctx.putImageData(content, 0, 0);
             }
+        }
+        if (e.ctrlKey == true && e.key == "o") { //Ctrl+O 打开
+            e.returnvalue = false;
+            e.preventDefault();
+            uploadCanvas();
         }
     }
 
@@ -358,6 +363,53 @@
             }
             return new Blob([u8arr], { type: mime });
         }
+    }
+
+    // 上传图片
+    function uploadCanvas() {
+        var fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.accept = "image/*";
+        fileInput.onchange = function (e) {
+            var file = e.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var img = new Image();
+                img.onload = function () {
+                    var canvasRatio = canvas.width / canvas.height;
+                    var imgRatio = img.width / img.height;
+
+                    var targetWidth, targetHeight;
+                    if (canvasRatio > imgRatio) {
+                        targetHeight = canvas.height;
+                        targetWidth = targetHeight * imgRatio;
+                    } else {
+                        targetWidth = canvas.width;
+                        targetHeight = targetWidth / imgRatio;
+                    }
+
+                    // 居中绘制
+                    var x = (canvas.width - targetWidth) / 2;
+                    var y = (canvas.height - targetHeight) / 2;
+                    // ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, x, y, targetWidth, targetHeight);
+                    writeHistory();
+                    // 重设状态
+                    toolbarPen.onpointerup();
+                    toolbarEraser.onpointerup();
+                    setToolbarStatus(true);
+
+                    // 释放内存
+                    img.remove();
+                    fileInput.remove();
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+        fileInput.click();
     }
 
     function setToolbarStatus(status) {
