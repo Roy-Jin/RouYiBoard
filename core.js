@@ -27,9 +27,9 @@
 
     let toolbarPen = document.querySelector(".toolbar-pen");
     let toolbarEraser = document.querySelector(".toolbar-eraser");
-    let toolbarPenOnly = document.querySelector(".toolbar-penonly");
-    let toolbarPenMenu = document.querySelector(".toolbarmenu-pen");
-    let toolbarEraserMenu = document.querySelector(".toolbarmenu-eraser");
+    let toolbarPenOnly = document.querySelector(".toolbar-penOnly");
+    let toolbarPenMenu = document.querySelector(".toolbarMenu-pen");
+    let toolbarEraserMenu = document.querySelector(".toolbarMenu-eraser");
 
     let eraser = document.querySelector(".eraser");
     let isPenOnly = false;
