@@ -63,9 +63,6 @@
     let baseLineMode = 0;
     let lineColorList = ["#000", "#5B2D90", "#0069BF", "#F6630C", "#AB228B", "#B7B7B7", "#E3E3E3", "#E71224", "#D20078", "#02A556", "#C09E66", "#FFC114"]; //线条颜色列表
     let lineColorMode = 0;
-    let history = [];
-    let priviousDraw = 0;
-    let priviousPressure = 0;
 
     for (let i = 0; i < 4; i++) {
         document.querySelector(`.width-switcher-${i + 1}`).onpointerup = function () { setPenWidth(i) }
@@ -113,7 +110,6 @@
         "down": function (e) {
             if (isPenOnly && e.pointerType != "pen") return;
             setToolbarStatus(false);
-            writeHistory();
             canDraw = true;
             ctx.globalCompositeOperation = "source-over";
             ctx.strokeStyle = lineColorList[lineColorMode];
@@ -164,7 +160,6 @@
     const eraserMode = {
         "down": function (e) {
             setToolbarStatus(false);
-            writeHistory();
             canDraw = true;
             ctx.strokeStyle = "rgba(0,0,0,1)";
             ctx.globalCompositeOperation = "destination-out";
@@ -246,6 +241,7 @@
     document.querySelector(".clearAll").onpointerup = function () {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         toolbarEraserMenu.classList.remove("active");
+        toolbarPen.onpointerup();
     }
     toolbarPen.onpointerup = function () {
         toolbarEraserMenu.classList.remove("active");
@@ -306,40 +302,10 @@
             e.returnvalue = false;
             toolbarPen.onpointerup();
         }
-        if (e.ctrlKey == true && e.key == "z") { //Ctrl+Z 撤销
-            e.returnvalue = false;
-            e.preventDefault();
-            let content = popHistory();
-            if (content) {
-                ctx.putImageData(content, 0, 0);
-            }
-        }
         if (e.ctrlKey == true && e.key == "o") { //Ctrl+O 打开
             e.returnvalue = false;
             e.preventDefault();
             uploadCanvas();
-        }
-    }
-
-    function writeHistory() {
-        if (history.length > 15) {
-            history.shift()
-        }
-        if (priviousDraw == 0) {
-            priviousDraw = new Date().getTime();
-            history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-        } else {
-            if (new Date().getTime() - priviousDraw > 1000) {
-                history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
-            }
-        }
-    }
-
-    function popHistory() {
-        if (history.length == 0) {
-            return false;
-        } else {
-            return history.pop(history);
         }
     }
 
@@ -348,7 +314,7 @@
         var imgData = canvas.toDataURL();
         var blob = dataURLtoBlob(imgData);
         var objURL = URL.createObjectURL(blob);
-        link.download = `DouBoard(${new Date().toLocaleString().replace(/\//g, "-")}).png`;
+        link.download = `RuoYiBoard(${new Date().toLocaleString().replace(/\//g, "-")}).png`;
         link.href = objURL;
         link.click();
         link.remove();
@@ -395,11 +361,6 @@
                     var y = (canvas.height - targetHeight) / 2;
                     // ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.drawImage(img, x, y, targetWidth, targetHeight);
-                    writeHistory();
-                    // 重设状态
-                    toolbarPen.onpointerup();
-                    toolbarEraser.onpointerup();
-                    setToolbarStatus(true);
 
                     // 释放内存
                     img.remove();
