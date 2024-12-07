@@ -1,4 +1,4 @@
-<h1 align="center">RouYiBoard</h1>
+<h1 align="center">RuoYiBoard</h1>
 
 > 一个支持压感的在线白板，便于用户进行创作与表达。
 
@@ -15,9 +15,9 @@
 
 最后，开源不易，如果你喜欢这个项目，请给个 Star 鼓励一下作者吧！
 
-- 🌟 [Gitee 仓库](https://gitee.com/Roy-Jin/RouYiBoard)
-- 🌟 [GitHub 仓库](https://github.com/Roy-Jin/RouYiBoard)
-- 🌐 [在线演示 (GitHub Pages)](https://Roy-Jin.github.io/RouYiBoard/)
+- 🌟 [Gitee 仓库](https://gitee.com/Roy-Jin/RuoYiBoard)
+- 🌟 [GitHub 仓库](https://github.com/Roy-Jin/RuoYiBoard)
+- 🌐 [在线演示 (GitHub Pages)](https://Roy-Jin.github.io/RuoYiBoard/)
 - 👤 [原作者 daidr](https://github.com/daidr)
 
 感谢您的支持与关注！
